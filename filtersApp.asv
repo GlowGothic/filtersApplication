@@ -79,8 +79,9 @@ varargout{1} = handles.output;
 function pushbutton1_Callback(hObject, eventdata, handles)
 [filename ,pathname] = uigetfile({'*.jpg';'*.png'});
 fullname = strcat(pathname,filename); 
+disp(fullname);
 imshow(imread(fullname), 'Parent', handles.axes1);
-setappdata(handles.axes1, 'imagePath', fullname);
+handles.originalImagePath = fullname;
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -102,26 +103,25 @@ function pushbutton2_KeyPressFcn(hObject, eventdata, handles)
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
 
-function ApplyNegativeFilter(imagePath, axes) 
+function ApplyNegativeFilter(imagePath) 
 disp(strcat('applying Negative filter to ', imagePath));
-i = imread(imagePath);
-ni = imcomplement(i);
-imshow(ni, 'Parent', axes);
 
-
-function ApplyOtherFilter(imagePath, axes)
+function ApplyOtherFilter(imagePath)
 disp(strcat('applying other filter to ', imagePath));
 
 % --- Executes on selection change in popupmenu1.
 function popupmenu1_Callback(hObject, eventdata, handles)
 selectedIndex = get(hObject, 'Value');
-fullpath = getappdata(handles.axes1, 'imagePath');
-if selectedIndex > 1 && strcmp(fullpath, '') == false
+
+
+disp(handles.originalImagePath);
+
+if (selectedIndex > 1 && handles.originalImagePath ~= '')
     switch selectedIndex
         case 2
-            ApplyNegativeFilter(fullpath, handles.axes2);
+            ApplyNegativeFilter(handles.originalImagePath);
         case 3
-            ApplyOtherFilter(fullpath, handles.axes2);
+            ApplyOtherFilter(handles.originalImagePath);
         otherwise
             disp('filter not handled');
     end
